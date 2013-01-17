@@ -23,14 +23,12 @@
  *  http://www.gnu.org/licenses/gpl-2.0.txt 
  */
 
-
 /*
 
 A large portion of source code comes from http://installgentoo.net/, released under the GPL.
 Much thanks to them/him for releasing the source!
 
 */
-
 
 if(isset($_GET['source']))
 { 
@@ -59,7 +57,6 @@ function calculate_percentage($used, $total){
 	return @round(100 - $used / $total * 100, 2); 
 }
 
-// Since these are all LAN machines it's safe to set timeout lower.
 function availableUrl($host, $port=80, $timeout=5) { 
   $fp = fSockOpen($host, $port, $errno, $errstr, $timeout); 
   return $fp!=false;
@@ -163,7 +160,6 @@ function loadColors($load)
 				font-family: Georgia, 'Times New Roman', serif;
 				padding: 0;
 				margin: 0;
-				color: #222;
 			}
 			#container {
 				margin: 0 auto;
@@ -294,7 +290,7 @@ function loadColors($load)
 				<h3>services<h3>
 				<p>HTTP server: <?=checkProcess("apache");?></p>
 				<p>MySQL: <?=checkProcess("mysql");?></p>
-				<p>Minecraft server: <?=checkProcess("craftbukkit");?> <a href="/paul">more info&raquo;</a></p>
+				<p>Minecraft server: <?=checkProcess("craftbukkit");?> <a href="/paul">More info &raquo;</a></p>
 			</div>
 			<div id="credits">
 				<p>Powered by: <a href="http://debian.org">Debian</a> | <a href="http://httpd.apache.org">Apache HTTP server</a> | <a href="http://cloudflare.com">CloudFlare</a> | <a href="http://bukkit.org">Bukkit</a> | <a href="https://github.com/h02/Minecraft-PHP-Query-Class">Minecraft PHP Query</a> | <a href="<?=$_SERVER["PHP_SELF"];?>?source">Source code</a></p>

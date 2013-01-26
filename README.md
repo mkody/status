@@ -1,1 +1,1 @@
-This is a basic web-facing server status page.
+This is a basic PHP server status page. It was written for a Debian server, so the commands are written for that OS. The code is provided in the hope that it will be useful or helpful, but it may require some modification to work.

@@ -106,6 +106,10 @@ $memory['Swap Percent Free'] = calculate_percentage($memory['Used Swap'],$memory
 $temp = exec('acpi -t');
 $temp = str_replace("Thermal 0: ok, ","",$temp);
 
+$cpu = exec('cat /proc/cpuinfo | grep "cpu MHz"');
+$cpu_ar = explode(" ", $cpu);
+$cpu_out = (int)$cpu_ar[2];
+
 define(GREEN,"#3DB015");
 define(YELLOW,"#FAFC4F");
 define(RED,"#C9362E");
@@ -136,6 +140,8 @@ function loadColors($load)
 		var loadThree = <?=$load_out[2];?> * 1000;
 		var diskBar = <?=$hd_out;?> * 10;
 		var ramBar = (100-<?=$memory['RAM Percent Free'];?>) * 10;
+		// Hard-coded for my server's max clock speed of 2.7 GHz. Change for your own use.
+		var cpuBar = (<?=$cpu_out;?> / 2800) * 1000;
 		$(document).ready(function() {
 			$('#loadBarOne').animate({
 				width: loadOne + "px"
@@ -151,6 +157,9 @@ function loadColors($load)
 			}, 1000, function(){});
 			$('#ramBar').animate({
 				width: ramBar + "px"
+			}, 1000, function(){});
+			$('#cpuBar').animate({
+				width: cpuBar + "px"
 			}, 1000, function(){});
 		});
 		</script>
@@ -231,6 +240,11 @@ function loadColors($load)
 				<h3>uptime</h3>
 				<p><?=$uptime_out;?></p>
 			</div>
+
+			<div class="block">
+				<h3>core temperature</h3>
+				<p><?=$temp;?></p>
+			</div>
 			<div class="block">
 				<h3>load averages</h3>
 				<p>Current status:
@@ -269,6 +283,13 @@ function loadColors($load)
 				</div>
 			</div>
 			<div class="block">
+				<h3>processor speed</h3>
+				<p><?=$cpu_out;?> MHz / 2800 MHz</p>
+				<div class="barContainer">
+					<div class="bar" id="cpuBar"></div>
+				</div>
+			</div>
+			<div class="block">
 				<h3>disk usage</h3>
 				<p><?=$hd_out;?>%, <?=format_bytes(kb2bytes($hd[2])); ?> used / <?=format_bytes(kb2bytes($hd[1])); ?> total</p>
 				<div class="barContainer">
@@ -281,10 +302,6 @@ function loadColors($load)
 				<div class="barContainer">
 					<div class="bar" id="ramBar"></div>
 				</div>
-			</div>
-			<div class="block">
-				<h3>core temperature</h3>
-				<p><?=$temp;?></p>
 			</div>
 			<div class="block">
 				<h3>services<h3>

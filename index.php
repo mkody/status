@@ -1,168 +1,10 @@
 <?php
-/*  PHP System Status 
- *  ------------------------------------------ 
- *  Author: Kevin Wu (haegenschlatt/dejawu)
- *  Last update: 12-24-2012 first release
- * 
- * 
- *  GNU License Agreement 
- *  --------------------- 
- *  This program is free software; you can redistribute it and/or modify 
- *  it under the terms of the GNU General Public License version 2 as 
- *  published by the Free Software Foundation. 
- * 
- *  This program is distributed in the hope that it will be useful, 
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- *  GNU General Public License for more details. 
- * 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program; if not, write to the Free Software 
- *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA 
- * 
- *  http://www.gnu.org/licenses/gpl-2.0.txt 
- */
-
-/*
-
-A large portion of source code comes from http://installgentoo.net/, released under the GPL.
-Much thanks to them/him for releasing the source!
-
-*/
-
-if(isset($_GET['source']))
-{ 
-	$lines = implode(range(1, count(file(__FILE__))), '<br />'); 
-	$content = highlight_file(__FILE__, TRUE); 
-	die('<html><head><title>Page Source For: '.__FILE__.'</title><style type="text/css">body {margin: 0px;margin-left: 5px;}.num {border-right: 1px solid;color: gray;float: left;font-family: monospace;font-size: 13px;margin-right: 6pt;padding-right: 6pt;text-align: right;}code {white-space: nowrap;}td {vertical-align: top;}</style></head><body><table><tr><td class="num"  style="border-left:thin; border-color:#000;">'.$lines.'</td><td class="content">'.$content.'</td></tr></table></body></html>'); 
-}
-
-function kb2bytes($kb){ 
-	return round($kb * 1024, 2); 
-}
-
-function format_bytes($bytes){ 
-	if ($bytes < 1024){ return $bytes; } 
-	else if ($bytes < 1048576){ return round($bytes / 1024, 2).'KB'; } 
-	else if ($bytes < 1073741824){ return round($bytes / 1048576, 2).'MB'; } 
-	else if ($bytes < 1099511627776){ return round($bytes / 1073741824, 2).'GB'; } 
-	else{ return round($bytes / 1099511627776, 2).'TB'; } 
-}
-
-function numbers_only($string){ 
-	return preg_replace('/[^0-9]/', '', $string); 
-} 
-
-function calculate_percentage($used, $total){ 
-	return @round(100 - $used / $total * 100, 2); 
-}
-
-function availableUrl($host, $port=80, $timeout=5) { 
-  $fp = fSockOpen($host, $port, $errno, $errstr, $timeout); 
-  return $fp!=false;
-}
-
-function checkProcess($teststring)
-{
-	$count = (int)exec('ps auxh | grep -c ' . $teststring)-2;
-	if(($count>0))
-	{
+define('GREEN',"#3DB015");
+define('YELLOW',"#FAFC4F");
+define('RED',"#C9362E");
 ?>
-	<span style="color: <?=GREEN;?>;">online</span>
-<?php
-	} else
-	{
-?>
-	<span style="color: <?=RED;?>;">offline</span>
-<?php
-	}
-}
-
-$uptime = exec('uptime'); 
-preg_match('/ (.+) up (.+) user(.+): (.+)/', $uptime, $update_out); 
-$users_out = substr($update_out[2], strrpos($update_out[2], ' ')+1); 
-$uptime_out = substr($update_out[2], 0, strrpos($update_out[2], ' ')-2); 
-
-// Array containing the three load averages
-$load_out = explode(", ",$update_out[4]);
-
-// Hard drive percentage
-$hd = explode(" ",exec("df /"));
-$hd_out = 100-calculate_percentage($hd[2],$hd[1]);
-
-$memory = array( 'Total RAM'  => 'MemTotal', 
-				 'Free RAM'   => 'MemFree', 
-				 'Cached RAM' => 'Cached', 
-				 'Total Swap' => 'SwapTotal', 
-				 'Free Swap'  => 'SwapFree' ); 
-foreach ($memory as $key => $value){ 
-	$memory[$key] = kb2bytes(numbers_only(exec('grep -E "^'.$value.'" /proc/meminfo'))); 
-} 
-$memory['Used Swap'] = $memory['Total Swap'] - $memory['Free Swap']; 
-$memory['Used RAM'] = $memory['Total RAM'] - $memory['Free RAM'] - $memory['Cached RAM']; 
-$memory['RAM Percent Free'] = calculate_percentage($memory['Used RAM'],$memory['Total RAM']); 
-$memory['Swap Percent Free'] = calculate_percentage($memory['Used Swap'],$memory['Total Swap']); 
-
-$temp = exec('acpi -t');
-$temp = str_replace("Thermal 0: ok, ","",$temp);
-
-$cpu = exec('cat /proc/cpuinfo | grep "cpu MHz"');
-$cpu_ar = explode(" ", $cpu);
-$cpu_out = (int)$cpu_ar[2];
-
-define(GREEN,"#3DB015");
-define(YELLOW,"#FAFC4F");
-define(RED,"#C9362E");
-
-function loadColors($load)
-{
-	if($load < 0.75)
-	{
-		return GREEN;
-	} else if($load < 1)
-	{
-		return YELLOW;
-	} else
-	{
-		return RED;
-	}
-}
-?>
-<!DOCTYPE html>
 <html>
 	<head>
-		<!-- Debug: <?=rand();?> -->
-		<title>kywu status panel</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-		<script>
-		var loadOne = <?=$load_out[0];?> * 1000;
-		var loadTwo = <?=$load_out[1];?> * 1000;
-		var loadThree = <?=$load_out[2];?> * 1000;
-		var diskBar = <?=$hd_out;?> * 10;
-		var ramBar = (100-<?=$memory['RAM Percent Free'];?>) * 10;
-		// Hard-coded for my server's max clock speed of 2.7 GHz. Change for your own use.
-		var cpuBar = (<?=$cpu_out;?> / 2800) * 1000;
-		$(document).ready(function() {
-			$('#loadBarOne').animate({
-				width: loadOne + "px"
-			}, 1000, function(){});
-			$('#loadBarTwo').animate({
-				width: loadTwo + "px"
-			}, 1000, function(){});
-			$('#loadBarThree').animate({
-				width: loadThree + "px"
-			}, 1000, function(){});
-			$('#diskBar').animate({
-				width: diskBar + "px"
-			}, 1000, function(){});
-			$('#ramBar').animate({
-				width: ramBar + "px"
-			}, 1000, function(){});
-			$('#cpuBar').animate({
-				width: cpuBar + "px"
-			}, 1000, function(){});
-		});
-		</script>
 		<style>
 			body {
 				background: #fff;
@@ -178,6 +20,8 @@ function loadColors($load)
 			}
 			header {
 				margin-bottom: 40px;
+				width: 500px;
+				float: left;
 			}
 			header h1{
 				font-weight: 100;
@@ -193,6 +37,7 @@ function loadColors($load)
 			}
 			.block {
 				margin-bottom: 40px;
+				clear: both;
 			}
 			.block h3 {
 				font-size: 35px;
@@ -227,28 +72,127 @@ function loadColors($load)
 				background: #000;
 				color: #fff;
 			}
+			#updateBlock{
+				float: right;
+			}
 		</style>
+		<script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+		<script>
+		// I am not the best at AJAX or Javascript in general. Feel free to recommend changes.
+		function loadColors(load)
+		{
+			if(load < 0.75)
+			{
+				return "<?=GREEN;?>";
+			} else if(load < 1)
+			{
+				return "<?=YELLOW;?>";
+			} else if(load > 1)
+			{
+				return "<?=RED;?>";
+			}
+		}
+
+		function updateAll()
+		{
+			var results;
+			$.get("result.php?uptime&temp&load&proc&disk&memory&service", function(data) {
+				results = data.split("\n");
+
+				$("#uptime").html(results[0]);
+
+				$("#temp").html(results[1]);
+
+				var loads = (results[2]).split("|");
+
+				if(loads[0] < 0.75)
+				{
+					$("#loadStatus").html("Optimal");
+					$("#loadStatus").css("color","<?=GREEN;?>");
+				} else if(loads[0] < 1)
+				{
+					$("#loadStatus").html("Warning!");
+					$("loadStatus".css("color","#000"));
+				} else if(loads[0] > 1)
+				{
+					$("#loadStatus").html("Overloaded!");
+					$("loadStatus".css("color","<?=RED;?>"));
+				}
+
+				$("#loadOne").html("Last 60 seconds: " + loads[0]);
+				$("#loadTwo").html("Last 5 minutes: " + loads[1]);
+				$("#loadThree").html("Last 15 minutes: " + loads[2]);
+				$("#loadBarOne").animate({
+					width: (loads[0] * 1000) + "px"
+				},1000,function(){});
+				$("#loadBarTwo").animate({
+					width: (loads[1] * 1000) + "px"
+				},1000,function(){});
+				$("#loadBarThree").animate({
+					width: (loads[2] * 1000) + "px"
+				},1000,function(){});
+				$("#loadBarOne").css("background-color",loadColors(loads[0]));	
+				$("#loadBarTwo").css("background-color",loadColors(loads[1]));	
+				$("#loadBarThree").css("background-color",loadColors(loads[2]));	
+
+				$("#procSpeed").html(results[3]);
+				$("#cpuBar").animate({
+					width: ((results[3] / 2800) * 1000) + "px"
+				},1000,function(){});
+
+				var disk = results[4].split("|");
+				$("#diskInfo").html(disk[0] + "%, " + disk[1] + " used / " + disk[2] + "total");
+				$("#diskBar").animate({
+					width: (disk[0] * 10) + "px"
+				},1000,function(){});
+
+				var memory = results[5].split("|");
+				$("#memInfo").html(memory[0] + "%, " + memory[3] + " used / " + memory[4] + "total");
+				$("#ramBar").animate({
+					width: (memory[0] * 10) + "px"
+				},1000,function(){});
+
+				var services = results[6].split("|");
+				$("#httpStatus").html(services[0]);
+				$("#mysqlStatus").html(services[1]);
+				$("#minecraftStatus").html(services[2]);
+			});
+		}
+
+		$(function(){
+			updateAll();
+			$("#update").click(function(event)
+			{
+				event.preventDefault();
+				updateAll();
+			});
+		});
+
+		</script>
 	</head>
-	<body>
+<body>
 		<div id="container">
 			<header>
 				<h1>kywu status panel</h1>
 				<h3>what's up?</h3>
 			</header>
-
+			<div id="updateBlock">
+				<a id="update" href="#">Update</a>
+			</div>
 			<div class="block">
 				<h3>uptime</h3>
-				<p><?=$uptime_out;?></p>
+				<p id="uptime"></p>
 			</div>
 
 			<div class="block">
 				<h3>core temperature</h3>
-				<p><?=$temp;?></p>
+				<p id="temp"></p>
 			</div>
 			<div class="block">
 				<h3>load averages</h3>
 				<p>Current status:
 				<?php
+				/*
 				if($load_out[0] < 0.75)
 				{
 				?>
@@ -267,50 +211,54 @@ function loadColors($load)
 					<span style="color: <?=RED;?>;">Overloaded!</span>
 				<?php
 				}
+				*/
 				?>
+				<span id="loadStatus"></span>
 				</p>
-				<p>Last 60 seconds: <?=$load_out[0]*100; ?>%</p>
+				
+				<p id="loadOne">Last 60 seconds: </p>
 				<div class="barContainer">
-					<div class="bar" id="loadBarOne" style="background-color: <?php echo loadColors($load_out[0]); ?>"></div>
+					<div class="bar" id="loadBarOne" style="background-color: "></div>
 				</div>
-				<p>Last 5 minutes: <?=$load_out[1]*100; ?>%</p>
+
+				<p id="loadTwo">Last 5 minutes: </p>
 				<div class="barContainer">
-					<div class="bar" id="loadBarTwo" style="background-color: <?php echo loadColors($load_out[1]); ?>"></div>
+					<div class="bar" id="loadBarTwo" style="background-color: "></div>
 				</div>
-				<p>Last 15 minutes: <?=$load_out[2]*100; ?>%</p>
+				<p id="loadThree">Last 15 minutes: </p>
 				<div class="barContainer">
-					<div class="bar" id="loadBarThree" style="background-color: <?php echo loadColors($load_out[2]); ?>"></div>
+					<div class="bar" id="loadBarThree" style="background-color: "></div>
 				</div>
 			</div>
 			<div class="block">
 				<h3>processor speed</h3>
-				<p><?=$cpu_out;?> MHz / 2800 MHz</p>
+				<p><span id="procSpeed"></span> MHz / 2800 MHz</p>
 				<div class="barContainer">
 					<div class="bar" id="cpuBar"></div>
 				</div>
 			</div>
 			<div class="block">
 				<h3>disk usage</h3>
-				<p><?=$hd_out;?>%, <?=format_bytes(kb2bytes($hd[2])); ?> used / <?=format_bytes(kb2bytes($hd[1])); ?> total</p>
+				<p id="diskInfo">%,  used /  total</p>
 				<div class="barContainer">
 					<div class="bar" id="diskBar"></div>
 				</div>
 			</div>
 			<div class="block">
 				<h3>memory</h3>
-				<p><?=100-$memory['RAM Percent Free'];?>%, <?=format_bytes($memory['Used RAM']);?> used / <?=format_bytes($memory['Total RAM']);?> total</p>
+				<p id="memInfo">%,  used /  total</p>
 				<div class="barContainer">
 					<div class="bar" id="ramBar"></div>
 				</div>
 			</div>
 			<div class="block">
 				<h3>services<h3>
-				<p>HTTP server: <?=checkProcess("apache");?></p>
-				<p>MySQL: <?=checkProcess("mysql");?></p>
-				<p>Minecraft server: <?=checkProcess("craftbukkit");?> <a href="/paul">More info &raquo;</a></p>
+				<p >HTTP server: <span id="httpStatus"></span></p>
+				<p>MySQL: <span id="mysqlStatus"></span></p>
+				<p><a href="/paul">Minecraft server</a>: <span id="minecraftStatus"></span></p>
 			</div>
 			<div id="credits">
-				<p>Powered by: <a href="http://debian.org">Debian</a> | <a href="http://httpd.apache.org">Apache HTTP server</a> | <a href="http://cloudflare.com">CloudFlare</a> | <a href="http://bukkit.org">Bukkit</a> | <a href="https://github.com/h02/Minecraft-PHP-Query-Class">Minecraft PHP Query</a> | <a href="<?=$_SERVER["PHP_SELF"];?>?source">Source code</a></p>
+				<p>Powered by: <a href="http://debian.org">Debian</a> | <a href="http://httpd.apache.org">Apache HTTP server</a> | <a href="http://cloudflare.com">CloudFlare</a> | <a href="http://bukkit.org">Bukkit</a> | <a href="https://github.com/h02/Minecraft-PHP-Query-Class">Minecraft PHP Query</a> | <a href="https://github.com/haegenschlatt">Source code</a></p>
 			</div>
 		</div>
 	</body>

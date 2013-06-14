@@ -95,6 +95,7 @@ define('RED',"#C9362E");
 
 		function updateAll()
 		{
+			console.log("Updating all");
 			var results;
 			$.get("result.php?uptime&temp&load&proc&disk&memory&service", function(data) {
 				results = data.split("\n");
@@ -160,12 +161,13 @@ define('RED',"#C9362E");
 		}
 
 		$(function(){
-			updateAll();
 			$("#update").click(function(event)
 			{
 				event.preventDefault();
 				updateAll();
 			});
+			updateAll();
+			setInterval("updateAll()",5000);
 		});
 
 		</script>
@@ -177,7 +179,7 @@ define('RED',"#C9362E");
 				<h3>what's up?</h3>
 			</header>
 			<div id="updateBlock">
-				<a id="update" href="#">Update</a>
+				<a id="update" href="#">Update manually</a> (updates every 5 seconds)
 			</div>
 			<div class="block">
 				<h3>uptime</h3>
@@ -258,7 +260,7 @@ define('RED',"#C9362E");
 				<p><a href="/paul">Minecraft server</a>: <span id="minecraftStatus"></span></p>
 			</div>
 			<div id="credits">
-				<p>Powered by: <a href="http://debian.org">Debian</a> | <a href="http://httpd.apache.org">Apache HTTP server</a> | <a href="http://cloudflare.com">CloudFlare</a> | <a href="http://bukkit.org">Bukkit</a> | <a href="https://github.com/h02/Minecraft-PHP-Query-Class">Minecraft PHP Query</a> | <a href="https://github.com/haegenschlatt">Source code</a></p>
+				<p>Powered by: <a href="http://debian.org">Debian</a> | <a href="http://httpd.apache.org">Apache HTTP server</a> | <a href="http://cloudflare.com">CloudFlare</a> | <a href="http://bukkit.org">Bukkit</a> | <a href="https://github.com/h02/Minecraft-PHP-Query-Class">Minecraft PHP Query</a> | <a href="https://github.com/haegenschlatt/status">Source code</a></p>
 			</div>
 		</div>
 	</body>

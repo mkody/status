@@ -101,102 +101,32 @@ foreach($processes as $key => $value)
 	$processes[$key] = checkProcess($key);
 }
 
-if(!$_GET)
-{
-	echo "ERROR: No request made.";
-	exit();
-}
-
-/*
-switch($_GET["q"])
-{
-	case "uptime":
-		echo $uptime_out;
-		break;
-	case "temp":
-		echo $temp;
-		break;
-	case "load":
-		echo $load_out[0] . "|" . $load_out[1] . "|" . $load_out[2];
-		break;
-	case "proc":
-		echo $cpu_out;
-		break;
-	case ""
-}
-*/
-$query = $_GET;
-foreach($query as $key => $value)
-{
-	switch($key)
-	{
-		case "uptime":
-			echo $uptime_out;
-			break;
-		case "temp":
-			echo $temp;
-			break;
-		case "load":
-			echo $load_out[0] . "|" . $load_out[1] . "|" . $load_out[2];
-			break;
-		case "proc":
-			echo $cpu_out;
-			break;
-		case "disk":
-			echo $hd_out . "|" . format_bytes(kb2bytes($hd[2])) . "|" . format_bytes(kb2bytes($hd[1]));
-			break;
-		// If no value, return all memory values. Otherwise return the specified one.
-		case "memory":
-			if(!$value)
-			{
-				/*
-				$memout = "";
-			
-				foreach($memory as $mkey => $mvalue)
-				{
-					$memout .= $mkey . "->"  . $mvalue ."|";
-				}
-				echo substr($memout, 0, -1);				
-				*/
-				$memout = $memory["RAM Percent Free"] . "|" . $memory["Used RAM"] . "|" . $memory["Total RAM"] . "|" . format_bytes($memory["Used RAM"]) . "|" . format_bytes($memory["Total RAM"]);
-				echo $memout;
-			} else
-			{
-				if(array_key_exists($value,$memory))
-				{
-					echo $memory[$value];
-				} else
-				{
-					echo "ERROR: Invalid memory request.";
-				}
-			}
-			break;
-		// A service must be specified.
-		case "service":
-			if(!$value)
-			{
-				$serviceOut = "";
-				// Prints "online" or "offline" in array order
-				foreach($processes as $pkey => $pvalue)
-				{
-					$serviceOut .= $pvalue . "|";
-				}
-				echo substr($serviceOut, 0 , -1);
-			} else
-			{
-				if(array_key_exists($value,$processes))
-				{
-					echo $processes[$value];
-				} else
-				{
-					echo "ERROR: Invalid service name.";
-				}
-			}
-			break;
-		default:
-			echo "ERROR: Attribute cannot be requested.";
-			exit();
-	}
-	echo "\n";
-}
+$result = array(
+	"uptime" => $uptime_out,
+	"temp" => $temp,
+	"load" => array(
+		$load_out[0],
+		$load_out[1],
+		$load_out[2]
+		),
+	"proc" => $cpu_out,
+	"disk" => array(
+		$hd_out,
+		format_bytes(kb2bytes($hd[2])),
+		format_bytes(kb2bytes($hd[1]))
+		),
+	"memory" => array(
+		$memory["RAM Percent Free"],
+		$memory["Used RAM"],
+		$memory["Total RAM"],
+		format_bytes($memory["Used RAM"]),
+		format_bytes($memory["Total RAM"])
+		),
+	"service" => array(
+		"apache" => $processes["apache"],
+		"mysql" => $processes["mysql"],
+		"craftbukkit" => $processes["craftbukkit"]
+		)
+);
+echo json_encode($result);
 ?>

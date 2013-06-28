@@ -79,6 +79,9 @@ define('RED',"#C9362E");
 		<script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
 		<script>
 		// I am not the best at AJAX or Javascript in general. Feel free to recommend changes.
+		var GREEN = "#3DB015";
+		var YELLOW = "#FAFC4F";
+		var RED = "#C9362E";
 		function loadColors(load)
 		{
 			if(load < 0.75)
@@ -92,71 +95,62 @@ define('RED',"#C9362E");
 				return "<?=RED;?>";
 			}
 		}
-
 		function updateAll()
 		{
 			console.log("Updating all");
-			var results;
-			$.get("result.php?uptime&temp&load&proc&disk&memory&service", function(data) {
-				results = data.split("\n");
+			$.get("result.php", function(raw) {
+				stats = eval('(' + raw + ')');
+				$("#uptime").html(stats.uptime);
+				
+				$("#temp").html(stats.temp);
 
-				$("#uptime").html(results[0]);
-
-				$("#temp").html(results[1]);
-
-				var loads = (results[2]).split("|");
-
-				if(loads[0] < 0.75)
+				if(stats.load[0] < 0.75)
 				{
-					$("#loadStatus").html("Optimal");
-					$("#loadStatus").css("color","<?=GREEN;?>");
-				} else if(loads[0] < 1)
+					$("#loadStatus").html("Good");
+					$("#loadStatus").css("color",GREEN);
+				} else if(stats.load[0] < 0.75)
 				{
 					$("#loadStatus").html("Warning!");
-					$("loadStatus".css("color","#000"));
-				} else if(loads[0] > 1)
+					$("#loadStatus").css("color","#000");
+				} else if(stats.load[0] > 1)
 				{
 					$("#loadStatus").html("Overloaded!");
-					$("loadStatus".css("color","<?=RED;?>"));
+					$("#loadStatus").css("color",RED);
 				}
-
-				$("#loadOne").html("Last 60 seconds: " + loads[0]);
-				$("#loadTwo").html("Last 5 minutes: " + loads[1]);
-				$("#loadThree").html("Last 15 minutes: " + loads[2]);
+				$("#loadOne").html("Last 60 seconds: " + stats.load[0]);
+				$("#loadTwo").html("Last 5 minutes: " + stats.load[1]);
+				$("#loadThree").html("Last 15 minutes: " + stats.load[2]);
 				$("#loadBarOne").animate({
-					width: (loads[0] * 1000) + "px"
+					width: (stats.load[0] * 1000) + "px"
 				},1000,function(){});
 				$("#loadBarTwo").animate({
-					width: (loads[1] * 1000) + "px"
+					width: (stats.load[1] * 1000) + "px"
 				},1000,function(){});
 				$("#loadBarThree").animate({
-					width: (loads[2] * 1000) + "px"
+					width: (stats.load[2] * 1000) + "px"
 				},1000,function(){});
-				$("#loadBarOne").css("background-color",loadColors(loads[0]));	
-				$("#loadBarTwo").css("background-color",loadColors(loads[1]));	
-				$("#loadBarThree").css("background-color",loadColors(loads[2]));	
+				$("#loadBarOne").css("background-color",loadColors(stats.load[0]));	
+				$("#loadBarTwo").css("background-color",loadColors(stats.load[1]));	
+				$("#loadBarThree").css("background-color",loadColors(stats.load[2]));	
 
-				$("#procSpeed").html(results[3]);
+				$("#procSpeed").html(stats.proc);
 				$("#cpuBar").animate({
-					width: ((results[3] / 2800) * 1000) + "px"
+					width: ((stats.proc / 2800) * 1000) + "px"
 				},1000,function(){});
 
-				var disk = results[4].split("|");
-				$("#diskInfo").html(disk[0] + "%, " + disk[1] + " used / " + disk[2] + "total");
+				$("#diskInfo").html(stats.disk[0] + "%, " + stats.disk[1] + " used / " + stats.disk[2] + "total");
 				$("#diskBar").animate({
-					width: (disk[0] * 10) + "px"
+					width: (stats.disk[0] * 10) + "px"
 				},1000,function(){});
 
-				var memory = results[5].split("|");
-				$("#memInfo").html(memory[0] + "%, " + memory[3] + " used / " + memory[4] + "total");
+				$("#memInfo").html(stats.memory[0] + "%, " + stats.memory[3] + " used / " + stats.memory[4] + "total");
 				$("#ramBar").animate({
-					width: (memory[0] * 10) + "px"
+					width: (stats.memory[0] * 10) + "px"
 				},1000,function(){});
 
-				var services = results[6].split("|");
-				$("#httpStatus").html(services[0]);
-				$("#mysqlStatus").html(services[1]);
-				$("#minecraftStatus").html(services[2]);
+				$("#httpStatus").html(stats.service.apache);
+				$("#mysqlStatus").html(stats.service.mysql);
+				$("#minecraftStatus").html(stats.service.craftbukkit);				
 			});
 		}
 
@@ -193,28 +187,6 @@ define('RED',"#C9362E");
 			<div class="block">
 				<h3>load averages</h3>
 				<p>Current status:
-				<?php
-				/*
-				if($load_out[0] < 0.75)
-				{
-				?>
-					<span style="color: <?=GREEN;?>;">Optimal</span>
-				<?php
-				}
-				else if($load_out[0] < 1)
-				{
-				?>
-					<span style="color: #000;">Warning!</span>
-				<?php
-				}
-				else if($load_out[0] > 1)
-				{
-				?>
-					<span style="color: <?=RED;?>;">Overloaded!</span>
-				<?php
-				}
-				*/
-				?>
 				<span id="loadStatus"></span>
 				</p>
 				

@@ -1,8 +1,3 @@
-<?php
-define('GREEN',"#3DB015");
-define('YELLOW',"#FAFC4F");
-define('RED',"#C9362E");
-?>
 <html>
 	<head>
 		<style>

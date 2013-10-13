@@ -128,5 +128,6 @@ $result = array(
 		"craftbukkit" => $processes["craftbukkit"]
 		)
 );
+header("Content-type: application/json");
 echo json_encode($result);
 ?>

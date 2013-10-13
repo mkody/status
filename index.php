@@ -69,14 +69,35 @@
 			}
 			#updateBlock{
 				float: right;
+				margin-right: -35px;
+				display: block;
+				width: 300px;
+				background-color: #eee;
+				height: 40px;
+				overflow: hidden;
+			}
+			#updateBar {
+				display:block;
+				background-color: #999;
+				width: 0;
+				height: 40px;
+				float: left;
+			}
+			#updateText{
+				display: none;
+				line-height: 40px;
+				text-align: center;
+				margin: 0;
+				padding: 0;
 			}
 		</style>
-		<script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
 		<script>
 		// I am not the best at AJAX or Javascript in general. Feel free to recommend changes.
 		var GREEN = "#3DB015";
 		var YELLOW = "#FAFC4F";
 		var RED = "#C9362E";
+
 		function loadColors(load)
 		{
 			if(load < 0.75)
@@ -90,11 +111,38 @@
 				return "<?=RED;?>";
 			}
 		}
-		function updateAll()
-		{
-			console.log("Updating all");
-			$.get("result.php", function(raw) {
-				stats = eval('(' + raw + ')');
+
+		$(function(){
+			$("#update").click(function(event)
+			{
+				event.preventDefault();
+				updateAll();
+			});
+			updateAll();
+			function updateAll()
+			{
+				console.log("Updating all.");
+				$("#updateBar").fadeOut(function()
+				{
+					$("#updateBar").animate({width:"0px"},10);
+					$("#updateText").fadeIn(function()
+					{
+						$.get("result.php",function(stats) {
+							populate(stats);
+							$("#updateText").fadeOut(function()
+							{
+								$("#updateBar").fadeIn(function()
+								{
+									$("#updateBar").animate({width:"300px"},5000,"linear",updateAll);
+								});
+							});
+						});
+					});
+				});
+			}
+
+			function populate(stats)
+			{
 				$("#uptime").html(stats.uptime);
 				
 				$("#temp").html(stats.temp);
@@ -103,7 +151,7 @@
 				{
 					$("#loadStatus").html("Good");
 					$("#loadStatus").css("color",GREEN);
-				} else if(stats.load[0] < 0.75)
+				} else if(stats.load[0] > 0.75 && stats.load[0] < 1)
 				{
 					$("#loadStatus").html("Warning!");
 					$("#loadStatus").css("color","#000");
@@ -124,9 +172,9 @@
 				$("#loadBarThree").animate({
 					width: (stats.load[2] * 1000) + "px"
 				},1000,function(){});
-				$("#loadBarOne").css("background-color",loadColors(stats.load[0]));	
-				$("#loadBarTwo").css("background-color",loadColors(stats.load[1]));	
-				$("#loadBarThree").css("background-color",loadColors(stats.load[2]));	
+				$("#loadBarOne").css("background-color",loadColors(stats.load[0]));
+				$("#loadBarTwo").css("background-color",loadColors(stats.load[1]));
+				$("#loadBarThree").css("background-color",loadColors(stats.load[2]));
 
 				$("#procSpeed").html(stats.proc);
 				$("#cpuBar").animate({
@@ -145,18 +193,8 @@
 
 				$("#httpStatus").html(stats.service.apache);
 				$("#mysqlStatus").html(stats.service.mysql);
-				$("#minecraftStatus").html(stats.service.craftbukkit);				
-			});
-		}
-
-		$(function(){
-			$("#update").click(function(event)
-			{
-				event.preventDefault();
-				updateAll();
-			});
-			updateAll();
-			setInterval("updateAll()",5000);
+				$("#minecraftStatus").html(stats.service.craftbukkit);
+			}
 		});
 
 		</script>
@@ -168,7 +206,8 @@
 				<h3>what's up?</h3>
 			</header>
 			<div id="updateBlock">
-				<a id="update" href="#">Update manually</a> (updates every 5 seconds)
+				<div id="updateBar"></div>
+				<p id="updateText">Updating...</p>
 			</div>
 			<div class="block">
 				<h3>uptime</h3>
@@ -187,16 +226,16 @@
 				
 				<p id="loadOne">Last 60 seconds: </p>
 				<div class="barContainer">
-					<div class="bar" id="loadBarOne" style="background-color: "></div>
+					<div class="bar" id="loadBarOne"></div>
 				</div>
 
 				<p id="loadTwo">Last 5 minutes: </p>
 				<div class="barContainer">
-					<div class="bar" id="loadBarTwo" style="background-color: "></div>
+					<div class="bar" id="loadBarTwo"></div>
 				</div>
 				<p id="loadThree">Last 15 minutes: </p>
 				<div class="barContainer">
-					<div class="bar" id="loadBarThree" style="background-color: "></div>
+					<div class="bar" id="loadBarThree"></div>
 				</div>
 			</div>
 			<div class="block">

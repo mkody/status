@@ -144,7 +144,7 @@
 			function populate(stats)
 			{
 				$("#uptime").html(stats.uptime);
-				
+
 				$("#temp").html(stats.temp);
 
 				if(stats.load[0] < 0.75)
@@ -191,9 +191,9 @@
 					width: (stats.memory[0] * 10) + "px"
 				},1000,function(){});
 
-				$("#httpStatus").html(stats.service.apache);
+				$("#httpStatus").html(stats.service.nginx);
 				$("#mysqlStatus").html(stats.service.mysql);
-				$("#minecraftStatus").html(stats.service.craftbukkit);
+				$("#mpdStatus").html(stats.service.mpd);
 			}
 		});
 
@@ -202,7 +202,7 @@
 <body>
 		<div id="container">
 			<header>
-				<h1>kywu status panel</h1>
+				<h1>kdy status panel</h1>
 				<h3>what's up?</h3>
 			</header>
 			<div id="updateBlock">
@@ -223,7 +223,7 @@
 				<p>Current status:
 				<span id="loadStatus"></span>
 				</p>
-				
+
 				<p id="loadOne">Last 60 seconds: </p>
 				<div class="barContainer">
 					<div class="bar" id="loadBarOne"></div>
@@ -263,10 +263,10 @@
 				<h3>services<h3>
 				<p >HTTP server: <span id="httpStatus"></span></p>
 				<p>MySQL: <span id="mysqlStatus"></span></p>
-				<p><a href="/paul">Minecraft server</a>: <span id="minecraftStatus"></span></p>
+				<p>MPD: <span id="mpdStatus"></span></p>
 			</div>
 			<div id="credits">
-				<p>Powered by: <a href="http://debian.org">Debian</a> | <a href="http://httpd.apache.org">Apache HTTP server</a> | <a href="http://cloudflare.com">CloudFlare</a> | <a href="http://bukkit.org">Bukkit</a> | <a href="https://github.com/h02/Minecraft-PHP-Query-Class">Minecraft PHP Query</a> | <a href="https://github.com/haegenschlatt/status">Source code</a></p>
+				<p>Powered by: <a href="http://debian.org">Debian</a> | <a href="http://nginx.org/">NGINX HTTP server</a> | <a href="http://online.net/">Online.net</a> | <a href="https://github.com/mkody/status">Source code</a></p>
 			</div>
 		</div>
 	</body>

@@ -190,7 +190,7 @@
 
 				$("#procSpeed").html(stats.proc);
 				$("#cpuBar").animate({
-					width: ((stats.proc / 2800) * 1000) + "px"
+					width: ((stats.proc / 3100) * 1000) + "px"
 				},1000,function(){});
 
 				$("#diskInfo").html(stats.disk[0] + "%, " + stats.disk[1] + " used / " + stats.disk[2] + "total");
@@ -216,7 +216,7 @@
 		<div id="container">
 			<header>
 				<h1>kdy status panel</h1>
-				<h3>what's up?</h3>
+				<h3>Server: Whooves</h3>
 			</header>
 			<div id="updateBlock">
 				<div id="updateBar"></div>
@@ -224,17 +224,17 @@
 			</div>
 			<div class="block">
 				<h3>uptime</h3>
-				<p id="uptime"></p>
+				<p id="uptime">[ Loading :) ]</p>
 			</div>
 
 			<div class="block">
 				<h3>core temperature</h3>
-				<p id="temp"></p>
+				<p id="temp">[ Loading :) ]</p>
 			</div>
 			<div class="block">
 				<h3>load averages</h3>
 				<p>Current status:
-				<span id="loadStatus"></span>
+				<span id="loadStatus">[ Loading :) ]</span>
 				</p>
 
 				<p id="loadOne">Last 60 seconds: </p>
@@ -253,35 +253,35 @@
 			</div>
 			<div class="block">
 				<h3>processor speed</h3>
-				<p><span id="procSpeed"></span> MHz / 2800 MHz</p>
+				<p><span id="procSpeed">[ Loading :) ]</span> MHz / 3100 MHz</p>
 				<div class="barContainer">
 					<div class="bar" id="cpuBar"></div>
 				</div>
 			</div>
 			<div class="block">
 				<h3>disk usage</h3>
-				<p id="diskInfo">%,  used /  total</p>
+				<p id="diskInfo">[ Loading :) ]</p>
 				<div class="barContainer">
 					<div class="bar" id="diskBar"></div>
 				</div>
 			</div>
 			<div class="block">
 				<h3>memory</h3>
-				<p id="memInfo">%,  used /  total</p>
+				<p id="memInfo">[ Loading :) ]</p>
 				<div class="barContainer">
 					<div class="bar" id="ramBar"></div>
 				</div>
 			</div>
 			<div class="block">
 				<h3>network<h3>
-				<p >IP: <span id="ip"></span></p>
+				<p >IP: <span id="ip">[ Loading :) ]</span></p>
 				<p id="speedtest"><a id="launchSpeedtest" href="#">Launch speedtest</a></p>
 			</div>
 			<div class="block">
 				<h3>services<h3>
-				<p >HTTP server: <span id="httpStatus"></span></p>
-				<p>MySQL: <span id="mysqlStatus"></span></p>
-				<p>MPD: <span id="mpdStatus"></span></p>
+				<p >HTTP server: <span id="httpStatus">[ Loading :) ]</span></p>
+				<p>MySQL: <span id="mysqlStatus">[ Loading :) ]</span></p>
+				<p>MPD: <span id="mpdStatus">[ Loading :) ]</span></p>
 			</div>
 			<div id="credits">
 				<p>Powered by: <a href="http://debian.org">Debian</a> | <a href="http://nginx.org/">NGINX HTTP server</a> | <a href="http://online.net/">Online.net</a> | <a href="https://github.com/mkody/status">Source code</a></p>

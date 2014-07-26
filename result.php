@@ -101,6 +101,8 @@ foreach($processes as $key => $value)
 	$processes[$key] = checkProcess($key);
 }
 
+$ip = exec("wget http://checkip.dyndns.org/ -O - -o /dev/null | cut -d: -f 2 | cut -d\< -f 1");
+
 $result = array(
 	"uptime" => $uptime_out,
 	"temp" => $temp,
@@ -126,8 +128,10 @@ $result = array(
 		"nginx" => $processes["nginx"],
 		"mysql" => $processes["mysql"],
 		"mpd" => $processes["mpd"]
-		)
+		),
+	"network" => array(
+		"ip" => $ip
+ 		)
 );
 header("Content-type: application/json");
 echo json_encode($result);
-?>

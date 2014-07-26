@@ -112,11 +112,23 @@
 			}
 		}
 
+		function speedtest(){
+			$.get("speedtest.php", function(raw) {
+				$("#speedtest").html(raw);
+			});
+		}
+
 		$(function(){
 			$("#update").click(function(event)
 			{
 				event.preventDefault();
 				updateAll();
+			});
+			$("#launchSpeedtest").click(function(event)
+			{
+				event.preventDefault();
+				$("#speedtest").html("Speedtesting, please wait...");
+				speedtest();
 			});
 			updateAll();
 			function updateAll()
@@ -194,6 +206,7 @@
 				$("#httpStatus").html(stats.service.nginx);
 				$("#mysqlStatus").html(stats.service.mysql);
 				$("#mpdStatus").html(stats.service.mpd);
+				$("#ip").html(stats.network.ip);
 			}
 		});
 
@@ -258,6 +271,11 @@
 				<div class="barContainer">
 					<div class="bar" id="ramBar"></div>
 				</div>
+			</div>
+			<div class="block">
+				<h3>network<h3>
+				<p >IP: <span id="ip"></span></p>
+				<p id="speedtest"><a id="launchSpeedtest" href="#">Launch speedtest</a></p>
 			</div>
 			<div class="block">
 				<h3>services<h3>

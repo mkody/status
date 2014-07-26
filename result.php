@@ -26,7 +26,7 @@ function numbers_only($string){
 }
 
 function calculate_percentage($used, $total){
-	return @round(100 - $used / $total * 100, 2);
+	return @round(($used / $total) * 100, 2);
 }
 
 function availableUrl($host, $port=80, $timeout=5) {
@@ -61,7 +61,7 @@ $load_out = explode(", ",$update_out[4]);
 
 // Hard drive percentage
 $hd = explode(" ",exec("df /"));
-$hd_out = 100-calculate_percentage($hd[2],$hd[1]);
+$hd_out = calculate_percentage($hd[2],$hd[1]);
 
 $memory = array( 'Total RAM'  => 'MemTotal',
 				 'Free RAM'   => 'MemFree',
@@ -73,7 +73,7 @@ foreach ($memory as $key => $value){
 }
 $memory['Used Swap'] = $memory['Total Swap'] - $memory['Free Swap'];
 $memory['Used RAM'] = $memory['Total RAM'] - $memory['Free RAM'] - $memory['Cached RAM'];
-$memory['RAM Percent Free'] = calculate_percentage($memory['Used RAM'],$memory['Total RAM']);
+$memory['RAM Percent Free'] = calculate_percentage($memory['Used RAM'],($memory['Total RAM'] + $memory['Cached RAM']));
 $memory['Swap Percent Free'] = calculate_percentage($memory['Used Swap'],$memory['Total Swap']);
 
 $temp = exec('acpi -t');

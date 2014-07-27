@@ -68,8 +68,8 @@
 				color: #fff;
 			}
 			#updateBlock{
-				float: right;
-				margin-right: -35px;
+				position: fixed;
+				right: 35px;
 				display: block;
 				width: 300px;
 				background-color: #eee;

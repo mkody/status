@@ -2,6 +2,7 @@
 // Most of this code is taken directly from the original standalone status page, so it may not be the most efficient it can be.
 // This should be gradually fixed with future versions.
 
+<<<<<<< HEAD
 if(isset($_GET['source']))
 {
 	$lines = implode(range(1, count(file(__FILE__))), '<br />');
@@ -11,6 +12,10 @@ if(isset($_GET['source']))
 
 function kb2bytes($kb){
 	return round($kb * 1024, 2);
+=======
+function kb2bytes($kb){ 
+	return round($kb * 1024, 2); 
+>>>>>>> upstream/master
 }
 
 function format_bytes($bytes){
@@ -135,3 +140,7 @@ $result = array(
 );
 header("Content-type: application/json");
 echo json_encode($result);
+<<<<<<< HEAD
+=======
+?>
+>>>>>>> upstream/master

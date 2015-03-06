@@ -2,20 +2,8 @@
 // Most of this code is taken directly from the original standalone status page, so it may not be the most efficient it can be.
 // This should be gradually fixed with future versions.
 
-<<<<<<< HEAD
-if(isset($_GET['source']))
-{
-	$lines = implode(range(1, count(file(__FILE__))), '<br />');
-	$content = highlight_file(__FILE__, TRUE);
-	die('<html><head><title>Page Source For: '.__FILE__.'</title><style type="text/css">body {margin: 0px;margin-left: 5px;}.num {border-right: 1px solid;color: gray;float: left;font-family: monospace;font-size: 13px;margin-right: 6pt;padding-right: 6pt;text-align: right;}code {white-space: nowrap;}td {vertical-align: top;}</style></head><body><table><tr><td class="num"  style="border-left:thin; border-color:#000;">'.$lines.'</td><td class="content">'.$content.'</td></tr></table></body></html>');
-}
-
-function kb2bytes($kb){
-	return round($kb * 1024, 2);
-=======
 function kb2bytes($kb){ 
-	return round($kb * 1024, 2); 
->>>>>>> upstream/master
+	return round($kb * 1024, 2);
 }
 
 function format_bytes($bytes){
@@ -140,7 +128,4 @@ $result = array(
 );
 header("Content-type: application/json");
 echo json_encode($result);
-<<<<<<< HEAD
-=======
 ?>
->>>>>>> upstream/master
